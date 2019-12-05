@@ -1,11 +1,16 @@
 import os
 
+from netaddr import *
+
 API_VERSION='1.0.0'
 class HostDict:
     def __init__(self):
         self.all_items = [
             # allowed addresses here!
-            '127.0.0.1'
+            '127.0.0.0/8',
+            '10.0.0.0/8',
+            '172.16.0.0/12',
+            '192.168.0.0/16',
         ]
         self.load_allowed_addresses()
 
@@ -27,30 +32,9 @@ class HostDict:
                 self.all_items.append(addr)
         
     def __contains__(self, item):
-        r10 = True
-        r192 = True
-        r172 = True
         try:
-            if item in self.all_items:
-                return True
-
-            if r192: # allow 192.168.0.0/16 range
-            #if False: # disallow 192.168.0.0/16 range
-                a, b, _, _ = item.split('.')
-                if a == '192' and b == '168':
-                    return True
-
-            if r10: # allow 10.0.0.0/8 range
-            #if False: # disallow 10.0.0.0/8 range
-                a, _, _, _ = item.split('.')
-                if a == '10':
-                    return True
-
-            # 172.16.0.0 - 172.31.255.255
-            if r172: # allow 172.16.0.0/12 range
-            #if False: # disallow 172.16.0.0/12 range
-                a, b, _, _ = item.split('.')
-                if a == '172' and (16 <= int(b) <= 31):
+            for subnet in self.all_items:
+                if item in IPNetwork(subnet):
                     return True
         except Exception as e:
             print("Exception encountered while attempting to parse ip.")
