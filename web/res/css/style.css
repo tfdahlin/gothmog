@@ -1,0 +1,42 @@
+body {
+    overflow: hidden;
+    width: 100%;
+    margin: 0px;
+}
+
+div.sidebar {
+    width: 20%;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+}
+
+div.content {
+    width: 80%;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+}
+
+div.ops-choice {
+
+}
+
+div.nav-choice {
+    padding: 5px;
+    border: solid black;
+    border-width: 2px;
+    margin: 2px;
+    /*border-style: solid black;*/
+}
+
+div.nav-choice:hover {
+    cursor: pointer;
+}
