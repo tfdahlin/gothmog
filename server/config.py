@@ -1,3 +1,5 @@
+import os
+
 API_VERSION='1.0.0'
 class HostDict:
     def __init__(self):
@@ -5,6 +7,24 @@ class HostDict:
             # allowed addresses here!
             '127.0.0.1'
         ]
+        self.load_allowed_addresses()
+
+    def load_allowed_addresses(self):
+        # Load ./allowed_addresses.txt for additional addresses
+        curr_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(curr_dir, 'allowed_addresses.txt')
+        all_addrs = None
+        try:
+            with open(file_path) as f:
+                all_addrs = f.readlines()
+        except FileNotFoundError as e:
+            return
+
+        # Add all the addresses in allowed_addresses.txt to
+        #  the list of allowed addresses.
+        if all_addrs:
+            for addr in all_addrs:
+                self.all_items.append(addr)
         
     def __contains__(self, item):
         r10 = True
