@@ -19,9 +19,11 @@ if [ "$1" == "--help" ]; then
     exit 0
 fi
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
 if [ "$1" == "-s" ]; then
-    gunicorn --certfile=./crypto/server.crt --keyfile=./crypto/server.key --bind 0.0.0.0:443 main:app
+    gunicorn --certfile=./crypto/server.crt --keyfile=./crypto/server.key --bind 0.0.0.0:443 --chdir $DIR main:app
 else
-    gunicorn --bind 0.0.0.0:8080 main:app
+    gunicorn --bind 0.0.0.0:8080 --chdir $DIR main:app
 fi
 
