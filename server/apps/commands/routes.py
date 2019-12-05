@@ -46,13 +46,15 @@ class Post(BaseHandler):
         op_name = self.request.data['op_name']
 
         # Fetch the previous command given.
-        prev_command = None
+        has_prev_cmd = False
         try:
             with access_db() as db_conn:
                 prev_command = db_conn.query(models.Command).\
                     filter(models.Command.op_name==op_name).\
                     order_by(desc(models.Command.created)).\
                     limit(1).first()
+                if prev_command:
+                    has_prev_cmd = True
         except Exception as e:
             logger.warn(e)
         
@@ -65,7 +67,11 @@ class Post(BaseHandler):
                 cmd.cmd_type = self.request.data['cmd_type']
                 cmd.cmd_data = self.request.data['cmd_data']
                 cmd.created = datetime.datetime.now()
-                if prev_command:
+                if has_prev_cmd:
+                    prev_command = db_conn.query(models.Command).\
+                        filter(models.Command.op_name==op_name).\
+                        order_by(desc(models.Command.created)).\
+                        limit(1).first()
                     prev_command.next_cmd = cmd.guid
                 db_conn.add(cmd)
                 db_conn.commit()
@@ -102,6 +108,7 @@ class Command(BaseHandler):
                 data['type'] = cmd.cmd_type
                 data['cmd'] = cmd.cmd_data
                 if cmd.next_cmd:
+                    print('Has next command.')
                     data['next'] = str(cmd.next_cmd)
             except Exception as e:
                 logger.warn(f'Exception encountered while fetching command {cmd_id}')

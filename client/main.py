@@ -106,7 +106,7 @@ class Client:
             
 def main():
     print(f'Program starting at {datetime.datetime.now()}\n')
-    c = Client(sys.argv[1])
+    c = Client(sys.argv[1], sys.argv[2])
     curr_folder = os.path.dirname(os.path.abspath(__file__))
     cached_cmd_file = os.path.join(curr_folder, 'prev_cmd.txt')
     if os.path.exists(cached_cmd_file):
