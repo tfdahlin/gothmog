@@ -102,3 +102,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+web/package-lock.json
+web/node_modules/
+server/db.sqlite
+
+*.swp
+
+server/crypto/*
+client/prev_cmd.txt
