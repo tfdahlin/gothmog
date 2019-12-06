@@ -31,6 +31,10 @@ select.ops-select {
     width: 100%;
 }
 
+select.ops-select:hover {
+    cursor: pointer;
+}
+
 div.nav-choice {
     display: flex;
     flex-direction: column;
