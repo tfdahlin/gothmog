@@ -24,7 +24,6 @@ function fetch_all_ops() {
 function change_op(op_name) {
     current_op = op_name;
     console.log(`Loading new op: ${current_op}.`);
-    document.getElementById('displayed-op-name').innerText = `Current op: ${current_op}`;
     display_commands();
 }
 

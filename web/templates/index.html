@@ -25,37 +25,44 @@
             <select id='ops-select' class='ops-select'>
             </select>
         </div>
-        <div id='files-nav' class='nav-choice'>
-            Files
-        </div>
-        <div id='commands-nav' class='nav-choice'>
-            Commands
-        </div>
         <div id='new-nav' class='nav-choice'>
-            Create New Op
-        </div>
-    </div>
-    <div id='content' class='content'>
-        <div id='displayed-op-name' class='displayed-op-name'>
-            No op selected.
-        </div>
-        <div id='command-content' class='displayed-content'>
-            <label for='command-type-choice'>
-            <select id='command-type-choice'>
-                <option value='shell'>Shell</option>
-                <option value='python'>Python</option>
-                <option value='control'>Control</option>
-            </select>
-            <input id='command-input' class='command-input' type='text'>
-            <div id='command-create' class='command-create'>Create new command</div>
-            <div id='command-list' class='command-list'>
-                
+            <div class='nav-text'>
+                Create New Op
             </div>
         </div>
-        <div id='files-content' class='files-content'>
-            <ul id='files-list' class='files-list'>
+        <div id='files-nav' class='nav-choice'>
+            <div class='nav-text'>
+                Files
+            </div>
+        </div>
+        <div id='commands-nav' class='nav-choice'>
+            <div class='nav-text'>
+                Commands
+            </div>
+        </div>
+    </div>
+    <div id='content-container' class='content-container'>
+        <div id='content' class='content'>
+            <div id='command-content' class='displayed-content'>
+                <div id='command-select-container'>
+                    <label for='command-type-choice' class='command-type-choice'>Command type:</label>
+                    <select id='command-type-choice' class='command-type-choice'>
+                        <option value='shell'>Shell</option>
+                        <option value='python'>Python</option>
+                        <option value='control'>Control</option>
+                    </select>
+                </div>
+                <input id='command-input' class='command-input' type='text'>
+                <div id='command-create' class='command-create'>Submit</div>
+                <div id='command-list' class='command-list'>
+                    
+                </div>
+            </div>
+            <div id='files-content' class='files-content'>
+                <ul id='files-list' class='files-list'>
 
-            </ul>
+                </ul>
+            </div>
         </div>
     </div>
     <script src='/javascripts/main.js'></script>
