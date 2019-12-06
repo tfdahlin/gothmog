@@ -1,7 +1,7 @@
 import logging, uuid, datetime, re, os, secrets
 from wsgiref.util import FileWrapper
 
-from util import BaseHandler, engine, requires_params, verify_peer
+from util import BaseHandler, engine, requires_params, verify_peer, log_file
 import models
 
 from sqlalchemy.orm import sessionmaker
@@ -9,7 +9,8 @@ from sqlalchemy import desc
 Session = sessionmaker(bind=engine)
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(message)s',
+                    level=logging.INFO, filename=log_file)
 
 
 class access_db:
@@ -97,7 +98,6 @@ class Delete(BaseHandler):
             file_to_delete = db_conn.query(models.Upload).\
                 filter_by(guid=file_id).first()
             if file_to_delete:
-                print(file_to_delete)
                 db_conn.delete(file_to_delete)
                 db_conn.commit()
                 return self.HTTP_200()
@@ -110,7 +110,6 @@ class FetchFiles(BaseHandler):
         with access_db() as db_conn:
             all_files = db_conn.query(models.Upload).all()
             all_files = [{'guid': str(x.guid), 'op_name': x.op_name, 'filename': x.filename} for x in all_files]
-            #print(all_files)
             return self.HTTP_200(data={'files':all_files})
 
 class Download(BaseHandler):

@@ -7,8 +7,14 @@ from pycnic.core import Handler
 from pycnic.errors import HTTP_400, HTTP_403
 from sqlalchemy import create_engine
 
+log_file = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    'app.log'
+)
+
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(message)s',
+                    level=logging.INFO, filename=log_file)
 
 db_uri = f'sqlite:///{os.path.join(os.path.dirname(os.path.abspath(__file__)), "db.sqlite")}'
 engine = create_engine(db_uri)
@@ -102,7 +108,7 @@ def verify_peer():
             #remote_ip = args[0].request.environ['gunicorn.socket'].getpeername()
 
             #if remote_ip[0] not in config.allowed_hosts:
-            print(f"Remote ip: {remote_ip}")
+            logger.info(f'Remote ip: {remote_ip}')
             if remote_ip not in config.allowed_hosts:
                 raise HTTP_403('Forbidden.')
             return f(*args, **kwargs)

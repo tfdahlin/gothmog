@@ -1,7 +1,7 @@
 import logging, uuid, datetime, re, os, secrets
 from wsgiref.util import FileWrapper
 
-from util import BaseHandler, engine, requires_params, verify_peer
+from util import BaseHandler, engine, requires_params, verify_peer, log_file
 import models
 
 from sqlalchemy.orm import sessionmaker
@@ -9,7 +9,8 @@ from sqlalchemy import desc
 Session = sessionmaker(bind=engine)
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(message)s',
+                    level=logging.INFO, filename=log_file)
 
 
 class access_db:
@@ -103,7 +104,6 @@ class DeleteOp(BaseHandler):
                     db_conn.commit()
                 except Exception as e:
                     logger.warn(e)
-            print(existing_op_commands)
             if existing_op_commands:
                 for cmd in existing_op_commands:
                     try:

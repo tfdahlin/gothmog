@@ -1,7 +1,7 @@
 import logging, uuid, datetime, re, os, secrets
 from wsgiref.util import FileWrapper
 
-from util import BaseHandler, engine, requires_params, verify_peer
+from util import BaseHandler, engine, requires_params, verify_peer, log_file
 import models
 
 from sqlalchemy.orm import sessionmaker
@@ -9,7 +9,8 @@ from sqlalchemy import desc
 Session = sessionmaker(bind=engine)
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(message)s',
+                    level=logging.INFO, filename=log_file)
 
 
 class access_db:
@@ -108,7 +109,6 @@ class Command(BaseHandler):
                 data['type'] = cmd.cmd_type
                 data['cmd'] = cmd.cmd_data
                 if cmd.next_cmd:
-                    print('Has next command.')
                     data['next'] = str(cmd.next_cmd)
             except Exception as e:
                 logger.warn(f'Exception encountered while fetching command {cmd_id}')
