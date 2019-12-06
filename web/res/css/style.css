@@ -19,6 +19,9 @@ div.sidebar {
     align-content: flex-start;
 }
 
+div.ops-choice {
+    margin: 2px;
+}
 
 select.ops-select {
     display: flex;
@@ -26,7 +29,6 @@ select.ops-select {
     color: white;
     font-size: 20px;
     width: 100%;
-    margin: 2px 0px 2px 0px;
 }
 
 div.nav-choice {
