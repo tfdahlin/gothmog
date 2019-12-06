@@ -36,7 +36,9 @@ function render_template(template_name, context) {
 }
 
 app.use('/', (req, res) => {
-    var context = {};
+    var context = {
+        'site_url': settings['site_url'],
+    };
     
     render_template('index.html', context)
     .then((html) => {

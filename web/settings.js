@@ -7,6 +7,7 @@ let settings = {
     'ssl_ca_path': null,
     'api_url': null,
     'webPort': 80,
+    'web_url': null,
 }
 
 module.exports = settings;
