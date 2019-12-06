@@ -1,11 +1,20 @@
-import sys, time, os, threading, datetime
+import sys, time, os, threading, datetime, logging
 
 import requests
+
+log_file = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    'app.log'
+)
 
 default_wait_time = 5
 retry_wait_time = 60
 extended_wait_time = 3600
 retry_threshold = 10
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(format='%(asctime)s - %(message)s',
+                     level=logging.INFO, filename=log_file)
 
 def usage():
     if len(sys.argv) < 2:
@@ -29,9 +38,9 @@ class Client:
     def handle_timeout(self):
         self.retries += 1
         if self.retries % retry_threshold == 0:
-            print(f"Max retries exceeded. Retrying in {extended_wait_time} seconds.")
+            logger.error(f"Max retries exceeded. Retrying in {extended_wait_time} seconds.")
             return extended_wait_time
-        print(f'Exception retrieving command. Retrying in {retry_wait_time} seconds.')
+        logger.warning(f'Exception retrieving command. Retrying in {retry_wait_time} seconds.')
         return retry_wait_time
 
     def fetch_next_command(self) -> int:
@@ -52,7 +61,7 @@ class Client:
                     self.retries = 0
                     return default_wait_time
             except Exception as e:
-                print(e)
+                logger.warning(e)
                 return self.handle_timeout()
         else:
             return self.fetch_latest_command()
@@ -65,7 +74,7 @@ class Client:
             cmd_id = r.json()['data']['guid']
             return self.fetch_command(cmd_id)
         except Exception as e:
-            print(e)
+            logger.warning(e)
             return self.handle_timeout()
         else:
             self.retries = 0
@@ -76,7 +85,7 @@ class Client:
             r = requests.get(f'{self.server_addr}/cmd/{cmd_id}')
             data = r.json()['data']
         except Exception as e:
-            print(e)
+            logger.warning(e)
             return self.handle_timeout()
         else:
             self.prev = cmd_id
@@ -93,7 +102,7 @@ class Client:
         if 'type' not in data:
             return
         if data['type'] == 'shell':
-            print(f"Executing shell command: {data['cmd']}")
+            logger.info(f"Executing shell command: {data['cmd']}")
             ret_val = os.system(data['cmd'])
         if data['type'] == 'python':
             program = data['cmd']
@@ -105,7 +114,7 @@ class Client:
         # TODO: additional command types?
             
 def main():
-    print(f'Program starting at {datetime.datetime.now()}\n')
+    logger.info(f'Program starting at {datetime.datetime.now()}\n')
     c = Client(sys.argv[1], sys.argv[2])
     curr_folder = os.path.dirname(os.path.abspath(__file__))
     cached_cmd_file = os.path.join(curr_folder, 'prev_cmd.txt')
