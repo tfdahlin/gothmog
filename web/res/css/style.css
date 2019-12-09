@@ -135,3 +135,27 @@ div.command-create:active {
 div.command-list {
     font-size: 20px;
 }
+
+div.files-list {
+    display: flex;
+    flex-direction: column;
+}
+
+div.file-container {
+    display: flex;
+    flex-direction: row;
+}
+
+div.file-name {
+    margin: 5px;
+}
+
+div.file-delete-button {
+    margin: 5px;
+
+}
+
+div.file-send-button {
+    margin: 5px;
+
+}
