@@ -173,8 +173,8 @@ function display_files() {
                 send_to_bots_link.addEventListener('click', send_to_clients_request);
 
                 file_container.appendChild(file_name);
-                file_container.appendChild(file_delete_link);
                 file_container.appendChild(send_to_bots_link);
+                file_container.appendChild(file_delete_link);
                 files_content_div.appendChild(file_container);
             }
         }
@@ -205,6 +205,10 @@ function send_to_clients_request() {
 }
 
 function send_file_delete_request() {
+    var decision = confirm('Are you sure you want to delete this?');
+    if (!decision) {
+        return;
+    }
     var guid_to_delete = this.getAttribute('guid');
     var req = new XMLHttpRequest();
     req.responseType = 'json';
