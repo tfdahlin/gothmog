@@ -1,4 +1,5 @@
 import logging, uuid, datetime, re, os, secrets
+from urllib.parse import unquote
 from wsgiref.util import FileWrapper
 
 from util import BaseHandler, engine, requires_params, verify_peer, log_file
@@ -39,6 +40,7 @@ class FetchOp(BaseHandler):
     """This should return the URL for the most recent command for a given op."""
     def get(self, op_name):
         logger.info(f'{self.base_request} /op/fetch/{op_name}')
+        op_name = unquote(op_name)
         try:
             data = {}
             with access_db() as db_conn:
@@ -48,13 +50,13 @@ class FetchOp(BaseHandler):
                     limit(1).first()
         except Exception as e:
             logger.warn(e)
-            return self.HTTP_404()
+            return self.HTTP_400()
         else:
             if latest:
                 data['guid'] = str(latest.guid)
                 return self.HTTP_200(data=data)
             else:
-                return self.HTTP_404()
+                return self.HTTP_200()
 
 class FetchAllOps(BaseHandler):
     def get(self):
@@ -117,5 +119,5 @@ routes = [
     ('/op/create', CreateOp()),
     ('/op/delete', DeleteOp()),
     ('/op', FetchAllOps()),
-    ('/op/fetch/([0-9a-zA-Z]+)', FetchOp())
+    ('/op/fetch/([0-9a-zA-Z%_-]+)', FetchOp())
 ]
