@@ -206,7 +206,7 @@ function send_to_clients_request() {
 
     var data = {
         'cmd_type': 'shell',
-        'cmd_data': `curl ${api_url}/files/${guid_to_send} > "/app/downloads/${filename}"`,
+        'cmd_data': `curl ${api_url}/files/download/${guid_to_send} > "/app/downloads/${filename}"`,
         'op_name': current_op,
     }
     req.send(JSON.stringify(data));
