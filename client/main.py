@@ -122,6 +122,20 @@ def main():
         with open(cached_cmd_file, 'r') as f:
             last_cmd = f.read().strip()
             c.prev = last_cmd
+    else:
+        # Some initial setup. We need an /app directory,
+        # and /app/downloads, then to change ownership
+        # to ec2-user
+        made_dir = False
+        if not os.path.exists('/app'):
+            ret_val = os.system('sudo mkdir /app')
+            made_dir = True
+        if not os.path.exists('/app/downloads'):
+            ret_val = os.system('sudo mkdir /app/downloads')
+            made_dir = True
+        if made_dir:
+            ret_val = os.system('sudo chown -R ec2-user:ec2-user /app')
+        
     while True:
         sleep_time = c.fetch_next_command()
         if sleep_time:
