@@ -25,6 +25,7 @@ function change_op(op_name) {
     current_op = op_name;
     console.log(`Loading new op: ${current_op}.`);
     display_commands();
+    display_delete_op_button();
 }
 
 function detect_op_choice() {
@@ -34,6 +35,10 @@ function detect_op_choice() {
         console.log(op_choice);
         if (op_choice != 'Choose an op') {
             change_op(op_choice);
+        } else {
+            current_op = null;
+            hide_all_content();
+            document.getElementById('delete-nav').style.display = 'none';
         }
     });
 }
@@ -97,6 +102,9 @@ function fetch_latest_command() {
     
     req.addEventListener('load', function () {
         var latest_command_guid = this.response['data']['guid'];
+        if (!latest_command_guid) {
+            return;
+        }
         console.log('Latest command: ' + latest_command_guid);
         var req2 = new XMLHttpRequest();
         req2.responseType = 'json';
@@ -276,6 +284,51 @@ function bind_upload_button() {
     });
 }
 
+function delete_current_op() {
+    if (!current_op) {
+        return;
+    }
+    var confirmation = confirm(`Delete ${current_op} op?`);
+    if (!confirmation) {
+        return;
+    }
+
+    var req = new XMLHttpRequest();
+    req.responseType = 'json';
+
+    var data = {
+        'op_name': current_op,
+    }
+    
+    req.addEventListener('load', function () {
+        console.log('Updating op list.');
+        current_op = null;
+        var delete_op_button = document.getElementById('delete-nav');
+        delete_op_button.style.display = 'none';
+        hide_all_content();
+        fetch_all_ops();
+        var select_tag = document.getElementById('ops-select');
+        select_tag.value = null;
+    });
+    req.open('POST', `${api_url}/op/delete`);
+    req.send(JSON.stringify(data));
+}
+
+function bind_delete_op_button() {
+    var delete_op_button = document.getElementById('delete-nav');
+    delete_op_button.addEventListener('click', delete_current_op);
+
+    // Hide the delete button when we don't have a select op
+    if (!current_op) {
+        delete_op_button.style.display = 'none';
+    }
+}
+
+function display_delete_op_button() {
+    var delete_op_button = document.getElementById('delete-nav');
+    delete_op_button.style.display = 'initial';
+}
+
 function init() {
     fetch_all_ops();
     detect_op_choice();
@@ -285,6 +338,7 @@ function init() {
     bind_command_nav();
     bind_files_nav();
     bind_upload_button();
+    bind_delete_op_button();
 }
 
 window.onload = init;

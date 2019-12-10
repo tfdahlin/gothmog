@@ -64,6 +64,35 @@ div.nav-text {
     font-size: 25px;
 }
 
+div.delete-choice {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5px;
+    margin: 2px;
+    background-color: #cc3300;
+    text-align: center;
+    height: 50px;
+    border-radius: 4px;
+}
+
+div.delete-choice:hover {
+    background-color: #aa3300;
+    cursor: pointer;
+}
+
+div.delete-choice:active {
+    background-color: #992200;
+    cursor: pointer;
+}
+
+div.delete-text {
+    flex-direction: column;
+    justify-content: center;
+    font-size: 25px;
+}
+
+
 
 /* Start of content styling */
 div.content-container {
