@@ -126,10 +126,6 @@ function fetch_latest_command() {
     req.send();
 }
 
-function detect_delete_op_click() {
-    
-}
-
 function display_commands() {
     if (!current_op) {
         return;
