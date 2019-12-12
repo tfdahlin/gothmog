@@ -86,43 +86,71 @@ function detect_create_command_click() {
         });
 
         req.addEventListener('load', function () {
-            fetch_latest_command();
+            load_all_commands();
         });
         req.open('POST', `${api_url}/post`);
         req.send(json_data);
     });
 }
 
-function fetch_latest_command() {
+function get_row_class(row_pos, list_len) {
+    var row_class = '';
+    if (list_len % 2 == 0) {
+        if (row_pos % 2 == 0) {
+            row_class = 'even-row';
+        } else {
+            row_class = 'odd-row';
+        }
+    } else {
+        if (row_pos % 2 == 0) {
+            row_class = 'odd-row';
+        } else {
+            row_class = 'even-row';
+        }
+    }
+    return row_class;
+}
+
+function load_all_commands() {
     if (!current_op) {
         return;
     }
     var req = new XMLHttpRequest();
     req.responseType = 'json';
-    
-    req.addEventListener('load', function () {
-        var latest_command_guid = this.response['data']['guid'];
-        if (!latest_command_guid) {
-            return;
-        }
-        console.log('Latest command: ' + latest_command_guid);
-        var req2 = new XMLHttpRequest();
-        req2.responseType = 'json';
-        
-        req2.addEventListener('load', function () {
-            var latest_command_type = this.response['data']['type'];
-            var latest_command_content = this.response['data']['cmd'];
 
-            var new_command_item = document.createElement('div');
-            new_command_item.innerText = `Latest Command (${latest_command_type}): ${latest_command_content}`;
-            document.getElementById('command-list').innerHTML = '';
-            document.getElementById('command-list').appendChild(new_command_item);
-        });
-        req2.open('GET', `${api_url}/cmd/${latest_command_guid}`);
-        req2.send();
-        
+    // Clear previous contents
+    req.addEventListener('load', function () {
+        var all_commands = this.response['data']['commands'];
+        var command_table = document.getElementById('command-table-body');
+        command_table.innerHTML = `<tr class='command-table-header' class='command-table-header'>
+    <th width='20%'>Time</th>
+    <th width='10%'>Type</th>
+    <th width='70%'>Command</th>
+</tr>
+`
+        for (var i = 0; i < all_commands.length; i++) {
+            var row_class = get_row_class(i, all_commands.length);
+            var cmd = all_commands[i];
+            var new_cmd_row = document.createElement('tr');
+            new_cmd_row.className = row_class;
+
+            var new_cmd_time = document.createElement('td');
+            new_cmd_time.innerText = cmd['created'];
+
+            var new_cmd_type = document.createElement('td');
+            new_cmd_type.innerText = cmd['type'];
+
+            var new_cmd_data = document.createElement('td');
+            new_cmd_data.innerText = cmd['cmd'];
+
+            new_cmd_row.appendChild(new_cmd_time);
+            new_cmd_row.appendChild(new_cmd_type);
+            new_cmd_row.appendChild(new_cmd_data);
+
+            command_table.appendChild(new_cmd_row);
+        }
     });
-    req.open('GET', `${api_url}/op/fetch/${current_op}`);
+    req.open('GET', `${api_url}/op/${current_op}/commands`);
     req.send();
 }
 
@@ -131,13 +159,10 @@ function display_commands() {
         return;
     }
     console.log(`Displaying commands for op ${current_op}`);
-    // Clear previous contents
-    document.getElementById('command-list').innerHTML = '';
 
     display_specific_content('command-content');
-    fetch_latest_command();
+    load_all_commands();
 }
-
 
 function display_files() {
     if (!current_op) {
@@ -231,8 +256,8 @@ function send_file_delete_request() {
 
 function hide_all_content() {
     return new Promise((resolve, reject) => {
-        document.getElementById('command-content').style.display = 'none';
-        document.getElementById('files-content').style.display = 'none';
+        document.getElementById('command-content').className = 'none-display';
+        document.getElementById('files-content').className = 'none-display';
         resolve();
     });
 }
@@ -240,7 +265,7 @@ function hide_all_content() {
 function display_specific_content(content) {
     hide_all_content()
     .then(() => {
-        document.getElementById(content).style.display = 'initial';
+        document.getElementById(content).className = content;
     })
     .catch((err) => {
         console.log(err);

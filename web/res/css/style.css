@@ -92,7 +92,9 @@ div.delete-text {
     font-size: 25px;
 }
 
-
+div.none-display {
+    display: none;
+}
 
 /* Start of content styling */
 div.content-container {
@@ -107,6 +109,15 @@ div.content-container {
 div.content {
     margin-left: 5px;
     border-left: 5px;
+}
+
+div.command-content {
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    position: absolute;
+    overflow-y: auto;
 }
 
 div.command-select-container {
@@ -140,7 +151,7 @@ input.command-input {
 }
 
 div.command-create {
-    display:inline;
+    display: inline-block;
     border: 1px solid black;
     background-color: #383838;
     padding: 2px;
@@ -149,6 +160,7 @@ div.command-create {
     border-radius: 2px;
     /*margin: 0px;*/
     font-size: 20px;
+    
 }
 
 div.command-create:hover {
@@ -162,11 +174,57 @@ div.command-create:active {
 }
 
 div.command-list {
+    display: flex;
+    flex-direction: column;
+    top: 72px;
+    left: 0px;
+    bottom: 0px;
+    right: 0px;
+    position: absolute;
+    overflow-y: auto;
+}
+
+table.command-list {
     font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+tbody.command-table-body {
+
+}
+
+td {
+    padding-left: 5px;
+}
+
+tr {
+    width: 100%;
+}
+
+tr.command-table-header {
+
+}
+
+tr.even-row {
+    background-color: #383838;
+}
+
+tr.odd-row {
+    background-color: #404040;
 }
 
 div.files-content {
-
+    display: flex;
+    flex-direction: column;
+    left: 0px;
+    top: 0px;
+    bottom: 0px;
+    right: 0px;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
 }
 
 div.files-header {

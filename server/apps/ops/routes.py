@@ -36,6 +36,34 @@ class access_db:
         """Closes the db connection as part of the teardown process."""
         self.db_conn.close()
 
+class FetchAllCommands(BaseHandler):
+    def get(self, op_name):
+        logger.info(f'{self.base_request} /op/{op_name}/commands')
+        op_name = unquote(op_name)
+        all_commands = []
+        try:
+            data = {}
+            with access_db() as db_conn:
+                result = db_conn.query(models.Command).\
+                    filter(models.Command.op_name==op_name).\
+                    order_by(models.Command.created.desc())
+                for cmd in result:
+                    cmd_time = cmd.created.replace(microsecond=0)
+                    transmissable_data = {
+                        'guid': str(cmd.guid),
+                        'op_name': cmd.op_name,
+                        'type': cmd.cmd_type,
+                        'cmd': cmd.cmd_data,
+                        'created': str(cmd_time),
+                    }
+                    all_commands.append(transmissable_data)
+        except Exception as e:
+            logger.warn(e)
+            return self.HTTP_400()
+        else:
+            data['commands'] = all_commands
+            return self.HTTP_200(data=data)
+
 class FetchOp(BaseHandler):
     """This should return the URL for the most recent command for a given op."""
     def get(self, op_name):
@@ -119,5 +147,6 @@ routes = [
     ('/op/create', CreateOp()),
     ('/op/delete', DeleteOp()),
     ('/op', FetchAllOps()),
-    ('/op/fetch/([0-9a-zA-Z%_-]+)', FetchOp())
+    ('/op/fetch/([0-9a-zA-Z%_-]+)', FetchOp()),
+    ('/op/([0-9a-zA-Z%_-]+)/commands', FetchAllCommands()),
 ]

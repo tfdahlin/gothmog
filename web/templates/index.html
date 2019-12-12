@@ -49,7 +49,7 @@
     <div id='content-container' class='content-container'>
         <div id='content' class='content'>
             <div id='command-content' class='displayed-content'>
-                <div id='command-select-container'>
+                <div id='command-select-container' class='command-select-container'>
                     <label for='command-type-choice' class='command-type-choice'>Command type:</label>
                     <select id='command-type-choice' class='command-type-choice'>
                         <option value='shell'>Shell</option>
@@ -60,7 +60,15 @@
                 <input id='command-input' class='command-input' type='text'>
                 <div id='command-create' class='command-create'>Submit</div>
                 <div id='command-list' class='command-list'>
-                    
+                    <table id='command-list' class='command-list'>
+                        <tbody id='command-table-body' class='command-table-body'>
+                            <tr class='command-table-header' id='command-table-header'>
+                                <th width='20%'>Time</th>
+                                <th width='10%'>Type</th>
+                                <th width='70%'>Command</th>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div id='files-content' class='files-content'>
