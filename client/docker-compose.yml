@@ -1,0 +1,10 @@
+version: '3'
+services:
+    gothmog-client:
+        build: .
+        container_name: gothmog-client
+        environment:
+            - API_URL=${GOTHMOG_API_URL:-http://host.docker.internal:8080}
+            - OP_NAME=${OP_NAME:-default_op}
+        entrypoint:
+            - /app/client/start.sh
