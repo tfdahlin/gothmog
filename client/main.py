@@ -1,4 +1,4 @@
-import sys, time, os, threading, datetime, logging, secrets
+import sys, time, os, threading, datetime, logging, secrets, uuid
 
 import requests
 
@@ -35,6 +35,7 @@ class Client:
         self.prev = None
         self.server_addr = server_addr
         self.op_name = op_name
+        self.client_id = uuid.uuid4()
 
     def update_cache_file(self):
         curr_folder = os.path.dirname(os.path.abspath(__file__))
@@ -114,13 +115,23 @@ class Client:
         if data['type'] == 'shell':
             logger.info(f"Executing shell command: {data['cmd']}")
             ret_val = os.system(data['cmd'])
-        if data['type'] == 'python':
+        elif data['type'] == 'python':
             program = data['cmd']
             t = threading.Thread(target=exec, args=[program])
             t.start()
-        if data['type'] == 'control':
+        elif data['type'] == 'control':
             if data['cmd'] == 'stop':
                 exit()
+            elif data['cmd'] == 'logs':
+                # TODO: upload logs to server.
+                #with open(log_file, 'rb') as f:
+                curr_time = datetime.datetime.now().replace(microsecond=0)
+                log_file_data = (f'{self.client_id}_{curr_time}_app.log', open(log_file, 'rb'), 'text/plain')
+                r = requests.post(f'{self.server_addr}/files/upload', files={'file': log_file_data}, data={'op_name': self.op_name})
+            else:
+                logger.warning(f'Invalid control command: {data["cmd"]}')
+        else:
+            logger.warning(f'Invalid command: {data}')
         # TODO: additional command types?
             
 def main():
