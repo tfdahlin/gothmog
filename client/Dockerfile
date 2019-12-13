@@ -13,6 +13,8 @@ RUN apk add --no-cache \
 # Application folders.
 RUN mkdir /app
 RUN mkdir /app/client
+RUN touch /app/client/error.log
+RUN touch /app/client/app.log
 RUN mkdir /app/downloads
 WORKDIR /app/client
 
