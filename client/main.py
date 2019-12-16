@@ -10,14 +10,18 @@ log_file = os.path.join(
 secretsGenerator = secrets.SystemRandom()
 
 def default_wait_time():
+    """Generate a wait time value, with some variance."""
     return secretsGenerator.randint(5,15)
 
 def retry_wait_time():
+    """Generate a longer wait time value, with some variance."""
     return secretsGenerator.randint(60,120)
 
 def extended_wait_time():
+    """Generate a very long wait time value, with some variance."""
     return secretsGenerator.randint(3600,4000)
-    
+
+# How many normal retries should be used before waiting for the extended wait time.
 retry_threshold = 10
 
 logger = logging.getLogger(__name__)
@@ -25,6 +29,7 @@ logging.basicConfig(format='%(asctime)s - %(message)s',
                      level=logging.INFO, filename=log_file)
 
 def usage():
+    """Print usage information for the script."""
     if len(sys.argv) < 2:
         print(f'Usage: {sys.argv[0]} server_address op_name')
         exit()
@@ -135,7 +140,7 @@ class Client:
         # TODO: additional command types?
             
 def main():
-    logger.info(f'Program starting at {datetime.datetime.now()}\n')
+    logger.info(f'Client starting')
     c = Client(sys.argv[1], sys.argv[2])
     curr_folder = os.path.dirname(os.path.abspath(__file__))
     cached_cmd_file = os.path.join(curr_folder, 'prev_cmd.txt')
