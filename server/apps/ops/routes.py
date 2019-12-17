@@ -2,8 +2,8 @@ import logging, uuid, datetime, re, os, secrets
 from urllib.parse import unquote
 from wsgiref.util import FileWrapper
 
-from util import BaseHandler, engine, requires_params, verify_peer, log_file
-import models
+from util import BaseHandler, engine, requires_params, verify_peer
+import models, config
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import desc
@@ -11,7 +11,7 @@ Session = sessionmaker(bind=engine)
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(message)s',
-                    level=logging.INFO, filename=log_file)
+                    level=logging.INFO, filename=config.log_file)
 
 
 class access_db:

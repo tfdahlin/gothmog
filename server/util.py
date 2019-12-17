@@ -7,14 +7,9 @@ from pycnic.core import Handler
 from pycnic.errors import HTTP_400, HTTP_403
 from sqlalchemy import create_engine
 
-log_file = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
-    'app.log'
-)
-
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(message)s',
-                    level=logging.INFO, filename=log_file)
+                    level=logging.INFO, filename=config.log_file)
 
 db_uri = f'sqlite:///{os.path.join(os.path.dirname(os.path.abspath(__file__)), "db.sqlite")}'
 engine = create_engine(db_uri)
