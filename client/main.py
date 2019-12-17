@@ -43,13 +43,20 @@ class Client:
         self.client_id = uuid.uuid4()
 
     def update_cache_file(self):
+        """Update the file that caches the previously-executed command.
+
+        This allows a client that fails to pick up where it left off if it gets restarted."""
         curr_folder = os.path.dirname(os.path.abspath(__file__))
         cached_cmd_file = os.path.join(curr_folder, 'prev_cmd.txt')
         if self.prev:
             with open(cached_cmd_file, 'w') as f:
                 f.write(self.prev)
 
-    def handle_timeout(self):
+    def handle_timeout(self) -> int:
+        """Determine how long of a timeout should be used.
+
+        Normally, it is a short timeout, unless we have had too many retries in a row,
+        in which case the timeout will be significantly longer."""
         self.retries += 1
         if self.retries % retry_threshold == 0:
             wait_time = extended_wait_time()
@@ -60,6 +67,10 @@ class Client:
         return wait_time
 
     def fetch_next_command(self) -> int:
+        """Determine whether to fetch the latest command, or just the next one in the sequence.
+
+        Returns the amount of time to wait before proceeding to the next command.
+        """
         if self.prev:
             try:
                 r = requests.get(f'{self.server_addr}/cmd/{self.prev}')
