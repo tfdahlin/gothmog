@@ -111,3 +111,4 @@ server/db.sqlite
 
 server/crypto/*
 client/prev_cmd.txt
+server/apps/files/uploaded_files/*
