@@ -1,8 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Filename: server/models.py
+
+# Native python imports
 import uuid
+
+# PIP library imports
 import sqlalchemy
-from sqlalchemy.types import TypeDecorator, CHAR, String
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.types import TypeDecorator, CHAR, String
+
+# Local file imports
 
 Base = declarative_base()
 
@@ -17,7 +26,6 @@ class GUID(TypeDecorator):
             return dialect.type_descriptor(UUID())
         else:
             return dialect.type_descriptor(CHAR(32))
-
 
     def process_bind_param(self, value, dialect):
         if value is None:
@@ -40,6 +48,7 @@ class GUID(TypeDecorator):
             return value
 
 class Command(Base):
+    """Client command ORM class"""
     __tablename__ = 'c2_command'
 
     guid = Column(GUID, primary_key=True, nullable=False)
@@ -52,6 +61,7 @@ class Command(Base):
     next_cmd = Column(GUID)
 
 class Upload(Base):
+    """File upload ORM class"""
     __tablename__ = 'c2_file'
     
     guid = Column(GUID, primary_key=True, nullable=False)
@@ -61,6 +71,7 @@ class Upload(Base):
     filename = Column(String, nullable=False)
 
 class OpName(Base):
+    """Op Name ORM class"""
     __tablename__ = 'c2_op_name'
     
     guid = Column(GUID, primary_key=True, nullable=False)
