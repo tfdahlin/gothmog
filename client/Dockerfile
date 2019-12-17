@@ -8,7 +8,6 @@ RUN apk add --no-cache \
     python3-dev \
     git \
     bash
-    #echo
 
 # Application folders.
 RUN mkdir /app
