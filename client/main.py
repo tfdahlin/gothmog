@@ -150,9 +150,9 @@ class Client:
             logger.warning(f'Invalid command: {data}')
         # TODO: additional command types?
             
-def main():
+def main(server_address, op_name):
     logger.info(f'Client starting')
-    c = Client(sys.argv[1], sys.argv[2])
+    c = Client(server_address, op_name)
     curr_folder = os.path.dirname(os.path.abspath(__file__))
     cached_cmd_file = os.path.join(curr_folder, 'prev_cmd.txt')
     if os.path.exists(cached_cmd_file):
@@ -180,4 +180,4 @@ def main():
 
 if __name__ == "__main__":
     usage()
-    main()
+    main(sys.argv[1], sys.argv[2])
