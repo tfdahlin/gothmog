@@ -1,11 +1,18 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Filename: server/util.py
+
+# Native python imports
+import logging, os
 from functools import wraps
-import os, logging
 
-import config
-
+# PIP library imports
 from pycnic.core import Handler
 from pycnic.errors import HTTP_400, HTTP_403
 from sqlalchemy import create_engine
+
+# Local file imports
+import config
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(message)s',

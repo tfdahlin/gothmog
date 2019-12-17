@@ -1,11 +1,18 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Filename: server/tests/__init__.py
+
+# Native python imports
+import os, sys
 from contextlib import contextmanager
 from multiprocessing import Event, Process
 from unittest import TestCase
 from wsgiref.simple_server import make_server
-import os, sys
 
+# PIP library imports
 import requests
 
+# Local file imports
 from main import app
 from util import BaseHandler
 

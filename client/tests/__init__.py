@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Filename: tests/__init__.py
+# Filename: client/tests/__init__.py
 
 # Native python imports
 

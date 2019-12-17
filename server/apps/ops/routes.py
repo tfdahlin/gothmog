@@ -1,18 +1,25 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Filename: server/apps/ops/routes.py
+
+# Native python imports
 import logging, uuid, datetime, re, os, secrets
 from urllib.parse import unquote
 from wsgiref.util import FileWrapper
 
+# PIP library imports
+from sqlalchemy import desc
+from sqlalchemy.orm import sessionmaker
+
+# Local file imports
 from util import BaseHandler, engine, requires_params, verify_peer
 import models, config
-
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import desc
-Session = sessionmaker(bind=engine)
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(message)s',
                     level=logging.INFO, filename=config.log_file)
 
+Session = sessionmaker(bind=engine)
 
 class access_db:
     """Wrapper class for accessing the database.

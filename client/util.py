@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# Filename: client/util.py
 
 # Native python imports
 import os, secrets
