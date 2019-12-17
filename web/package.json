@@ -1,7 +1,7 @@
 {
-  "name": "c2web",
+  "name": "gothmog-web",
   "version": "1.0.0",
-  "description": "Web UI for controlling the C2",
+  "description": "Web UI for controlling the Gothmog C2",
   "main": "app.js",
   "dependencies": {
     "express": "^4.17.1",
@@ -14,5 +14,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Taylor Dahlin",
-  "license": "UNLICENSED"
+  "license": "The Hippocratic License v1.2"
 }
