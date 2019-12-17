@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Native python imports
 import os, secrets
 
@@ -19,6 +21,7 @@ def extended_wait_time():
     return secretsGenerator.randint(3600, 4000)
 
 def get_log_file():
+    """Fetch the log file location for the client."""
     log_file = os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
         'app.log'
