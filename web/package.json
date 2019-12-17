@@ -1,8 +1,28 @@
 {
   "name": "gothmog-web",
-  "version": "1.0.0",
   "description": "Web UI for controlling the Gothmog C2",
+  "author": {
+    "name": "Taylor Dahlin",
+    "email": "tfdahlin [at] gmail.com",
+    "url": "https://taylorfoxdahl.in/"
+  },
+  "contributors": [
+    {
+    "name": "Taylor Dahlin",
+    "email": "tfdahlin [at] gmail.com",
+    "url": "https://taylorfoxdahl.in/"
+    }
+  ],
+  "homepage": "https://github.com/tfdahlin/gothmog",
+  "repository": "github:tfdahlin/gothmog",
+  "bugs": "https://github.com/tfdahlin/gothmog/issues",
+  "version": "1.0.0",
+  "license": "The Hippocratic License v1.2",
+  "keywords": [
+
+  ],
   "main": "app.js",
+  "private": true,
   "dependencies": {
     "express": "^4.17.1",
     "mustache": "^3.1.0",
@@ -12,7 +32,5 @@
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Taylor Dahlin",
-  "license": "The Hippocratic License v1.2"
+  }
 }
