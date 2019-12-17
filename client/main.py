@@ -30,7 +30,7 @@ retry_threshold = 10
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format='%(asctime)s - %(message)s',
-                     level=logging.INFO, filename=util.get_log_file())
+                     level=logging.INFO, filename=config.log_file)
 
 def usage():
     """Print usage information for the script."""

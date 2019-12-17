@@ -22,10 +22,3 @@ def extended_wait_time():
     """Generate a very long wait time value, with some variance."""
     return secretsGenerator.randint(3600, 4000)
 
-def get_log_file():
-    """Fetch the log file location for the client."""
-    log_file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        'app.log'
-    )
-    return log_file
