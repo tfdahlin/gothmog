@@ -19,6 +19,7 @@ const settings = require('./settings');
 
 process.title = 'C2 Web UI';
 const template_dir = path.join(__dirname, 'templates');
+const javascripts_dir = path.join(__dirname, 'res', 'javascripts');
 const app = express();
 
 // Functions
@@ -72,16 +73,85 @@ function start_server(app) {
     });
 }
 
+function fetch_file_contents(filename) {
+    return new Promise((resolve, reject) => {
+        fs.readFile(filename, 'utf-8', function (err, contents) {
+            if (err) {
+                console.log(err);
+                reject('Could not read file: ' + filename);
+            } else {
+                resolve(contents);
+            }
+        });
+    });
+}
+
+function fetch_static_javascript(filename) {
+    /*TODO: Comment function
+
+    */
+    return new Promise((resolve, reject) => {
+        var valid_files = [
+            'main.js'
+        ];
+        // if the given file is a valid one
+        if (valid_files.indexOf(filename) >= 0) {
+            fetch_file_contents(path.join(javascripts_dir, filename))
+            .then((contents) => {
+                resolve(contents);
+            })
+            .catch((err) => {
+                reject(err);
+            });
+        }
+    });
+}
+
+function render_static_javascript(filename, context) {
+    /*TODO: Comment function
+
+    */
+    return new Promise((resolve, reject) => {
+        fetch_static_javascript(filename)
+        .then((html) => {
+            resolve(mustache.render(html, context));
+        })
+        .catch((err) => {
+            reject(err);
+        });
+    });
+}
+
 // Common files
 app.use('/css', express.static(path.join(__dirname, 'res', 'css')));
 app.use('/media', express.static(path.join(__dirname, 'res', 'media')));
-app.use('/javascripts', express.static(path.join(__dirname, 'res', 'javascripts')));
+//app.use('/javascripts', express.static(path.join(__dirname, 'res', 'javascripts')));
 
 // Favicon
 app.use(favicon(path.join(__dirname, 'res', 'favicon', 'favicon.ico')));
 
 // Routes
+app.use('/javascripts/:filename', (req, res) => {
+    /*
+
+    */
+    var context = {
+        'api_url': settings['api_url'],
+    };
+    render_static_javascript(req.params['filename'], context)
+    .then((javascript) => {
+        res.status(200).type('application/json').send(javascript);
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).send('Server error.');
+    });
+});
+
 app.use('/', (req, res) => {
+    /*
+
+    */
     var context = {
         'site_url': settings['site_url'],
     };

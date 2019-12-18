@@ -1,7 +1,11 @@
 var current_op = null;
 
+{{#api_url}}
+var api_url = `{{{api_url}}}`;
+{{/api_url}}
+{{^api_url}}
 var api_url = `${window.location.protocol}//${window.location.hostname}:8080`;
-
+{{/api_url}}
 function fetch_all_ops() {
     // Fetch all known ops and put them in the select option list.
     var select_tag = document.getElementById('ops-select');
