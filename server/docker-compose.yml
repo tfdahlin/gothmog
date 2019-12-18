@@ -1,0 +1,9 @@
+version: '3'
+services:
+    gothmog-server:
+        build: .
+        container_name: gothmog-server
+        entrypoint:
+            - /app/server/server.sh
+        ports:
+            - "${API_PORT:-8080}:8080"
