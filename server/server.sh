@@ -2,10 +2,10 @@
 
 ##### Functions
 function usage() {
-    echo "Usage: $1 [args]"
+    echo "Usage: $0 [args]"
     echo "args:"
     #echo "    -s: Runs the server over HTTPS"
-    echo "    --help: Displays usage help"
+    echo "    -h, --help: Displays usage help"
 }
 
 function run_waitress() {
@@ -15,12 +15,12 @@ function run_waitress() {
 ##### Main
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-if [ "$#" -ge 2 ]; then
+if [ "$#" -ge 1 ]; then
     usage
     exit 1
 fi
 
-if [ "$#" -eq 2 ]; then
+if [ "$#" -eq 1 ]; then
     if [ "$1" == "--help" ]; then
         usage
         exit 0
