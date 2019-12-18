@@ -74,6 +74,11 @@ function start_server(app) {
 }
 
 function fetch_file_contents(filename) {
+    /*Read a given file and resolves its contents.
+
+    Arguments:
+        filename (string): The file to be opened and read.
+    */
     return new Promise((resolve, reject) => {
         fs.readFile(filename, 'utf-8', function (err, contents) {
             if (err) {
@@ -87,8 +92,10 @@ function fetch_file_contents(filename) {
 }
 
 function fetch_static_javascript(filename) {
-    /*TODO: Comment function
+    /*Fetch a javascript file from res/javascripts from the allowed files, else rejects.
 
+    Arguments:
+        filename (string): The file to be fetched, if it is an existing file.
     */
     return new Promise((resolve, reject) => {
         var valid_files = [
@@ -108,8 +115,11 @@ function fetch_static_javascript(filename) {
 }
 
 function render_static_javascript(filename, context) {
-    /*TODO: Comment function
+    /*Fetch a javascript file and render it with a given context.
 
+    Arguments:
+        filename (string): The filename to be fetched from res/javascripts for rendering.
+        context (object): Context to be included in the rendering process.
     */
     return new Promise((resolve, reject) => {
         fetch_static_javascript(filename)
@@ -125,7 +135,6 @@ function render_static_javascript(filename, context) {
 // Common files
 app.use('/css', express.static(path.join(__dirname, 'res', 'css')));
 app.use('/media', express.static(path.join(__dirname, 'res', 'media')));
-//app.use('/javascripts', express.static(path.join(__dirname, 'res', 'javascripts')));
 
 // Favicon
 app.use(favicon(path.join(__dirname, 'res', 'favicon', 'favicon.ico')));
