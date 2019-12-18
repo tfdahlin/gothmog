@@ -1,6 +1,6 @@
 from alpine:latest
 
-LABEL maintainer='tdahlin@2u.com'
+LABEL maintainer='tfdahlin@gmail.com'
 
 # Installations
 RUN apk add --no-cache \
