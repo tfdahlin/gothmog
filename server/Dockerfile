@@ -17,11 +17,6 @@ RUN touch /app/server/app.log
 RUN mkdir /app/downloads
 WORKDIR /app/server
 
-# No need to run this as root.
-RUN addgroup -S gothmog-server && adduser -S -G gothmog-server gothmog-server
-RUN chown -R gothmog-server:gothmog-server /app
-USER gothmog-server
-
 # Copy necessary files.
 COPY ./apps /app/server/apps
 COPY ./config.py /app/server/config.py
@@ -33,6 +28,11 @@ COPY ./server.sh /app/server/server.sh
 COPY ./setup.sh /app/server/setup.sh
 COPY ./tests /app/server/tests
 COPY ./util.py /app/server/util.py
+
+# No need to run this as root.
+RUN addgroup -S gothmog-server && adduser -S -G gothmog-server gothmog-server
+RUN chown -R gothmog-server:gothmog-server /app
+USER gothmog-server
 
 # Run setup within the container.
 RUN /app/server/setup.sh
