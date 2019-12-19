@@ -24,6 +24,9 @@ USER gothmog-client
 
 # Copy necessary files.
 COPY ./main.py /app/client/main.py
+COPY ./util.py /app/client/util.py
+COPY ./config.py /app/client/config.py
+COPY ./tests /app/client/tests
 COPY ./requirements.txt /app/client/requirements.txt
 COPY ./setup.sh /app/client/setup.sh
 COPY ./start.sh /app/client/start.sh
