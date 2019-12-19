@@ -9,7 +9,7 @@ import stat, sys, time, threading, os, uuid
 import requests
 
 # Local file imports
-import util
+import util, config
 
 secretsGenerator = secrets.SystemRandom()
 
@@ -134,11 +134,13 @@ class Client:
         """Determine how long of a timeout should be used, and wait that long."""
         self.retries += 1
         if self.retries % retry_threshold == 0:
+            wait_time = util.extended_wait_tim()
             logger.error(f"Max retries exceeded. Retrying in {wait_time} seconds.")
-            time.sleep(util.extended_wait_time())
+            time.sleep(wait_time)
             return
-        logger.warning(f'Exception retrieving command. Retrying in {wait_time} seconds.')
-        time.sleep(util.retry_wait_time())
+        wait_time = util.retry_wait_time()
+        logger.warning(f'Retrying in {wait_time} seconds.')
+        time.sleep(wait_time)
         return
 
     def fetch_next_command(self) -> int:
@@ -180,6 +182,9 @@ class Client:
             if r.status_code != 200:
                 time.sleep(util.default_wait_time())
                 return
+            if 'guid' not in r.json()['data']:
+                logger.info('No command available.')
+                return self.handle_timeout()
             cmd_id = r.json()['data']['guid']
             return self.fetch_command(cmd_id)
         except Exception as e:
@@ -217,12 +222,19 @@ class Client:
         Currently, this uploads the log as a file to the file server, but implementation may change in the future.
         """
         curr_time = datetime.datetime.now().replace(microsecond=0)
-        log_file_data = (f'{self.client_id}_{curr_time}_app.log', open(util.get_log_file(), 'rb'), 'text/plain')
+        log_file_data = (f'{self.client_id}_{curr_time}_app.log', open(config.log_file, 'rb'), 'text/plain')
         try:
-            r = requests.post(f'{self.server_addr}/file/upload', files={'file': log_file_data}, data={'op_name': self.op_name})
+            r = requests.post(f'{self.server_addr}/files/upload', files={'file': log_file_data}, data={'op_name': self.op_name})
         except Exception as e:
             logger.warning('Exception encountered while attempting to post client log.')
             logger.warning(e)
+        else:
+            if r.status_code == 200:
+                logger.info('Uploaded log file.')
+            else:
+                logger.warning('Error uploading log file.')
+                logger.warning(r)
+                logger.warning(r.contents)
 
     def handle_command(self, data):
         """Executes a given command.
@@ -251,6 +263,8 @@ class Client:
             elif data['cmd'] == 'logs':
                 if (not 'client_id' in data) or (self.client_id == data['client_id']):
                     self.post_log()
+                else:
+                    logger.info('Logs command issued, but not to this client.')
             else:
                 logger.warning(f'Invalid control command: {data["cmd"]}')
         else:

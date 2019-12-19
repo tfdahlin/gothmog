@@ -12,11 +12,11 @@ import os, secrets
 secretsGenerator = secrets.SystemRandom()
 def default_wait_time():
     """Generate a short wait time value, with some variance."""
-    return secretsGenerator.randint(5,15)
+    return secretsGenerator.randint(5, 15)
 
 def retry_wait_time():
     """Generate a longer wait time value, with some variance."""
-    return secretsGenerator.randint(60.120)
+    return secretsGenerator.randint(60, 120)
 
 def extended_wait_time():
     """Generate a very long wait time value, with some variance."""
