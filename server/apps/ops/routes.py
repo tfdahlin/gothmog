@@ -91,7 +91,7 @@ class FetchOp(BaseHandler):
                 data['guid'] = str(latest.guid)
                 return self.HTTP_200(data=data)
             else:
-                return self.HTTP_200()
+                return self.HTTP_404()
 
 class FetchAllOps(BaseHandler):
     def get(self):
