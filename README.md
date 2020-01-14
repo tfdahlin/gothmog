@@ -46,7 +46,7 @@ As mentioned before, the web UI was built to hopefully be intuitive to use. In t
 
 Upon selecting an op, you will be taken to the command screen. Here, you can select the type of command you want to issue, and see previously issued commands, sorted by recency. Again, there's a dropdown menu for the command type, and you can choose between `shell`, `python`, and `control`. 
 
-![Command Interface Screenshot](commands_screenshot.png "Issuing Commands to the Bots")
+![Command Interface Screenshot](images/commands_screenshot.png "Issuing Commands to the Bots")
 
 `Shell` commands are run with Python's `os.system()` function, and behaves as though you were actually using a shell on the machine. These are run as the user running the python script, so keep this in mind if you are planning to run commands with sudo, or that otherwise might require elevated privileges. The docker containers are not run as root, and are alpine linux images, so be aware that their shell functionality may be quite limited. They were originally designed with the intent of running python scripts concurrently, so not much is installed on them.
 
@@ -56,7 +56,7 @@ Upon selecting an op, you will be taken to the command screen. Here, you can sel
 
 There is also a `Files` section on the web UI. If you navigate to this section, you will be able to upload and download files to and from the server, as well as issue commands to the bots to download specific files using a convenience button. This is where you can find the clients' log files when you request them, as well as a location where you can upload scripts for the clients to download. For example, you might upload a tarball with a handful of python scripts, then navigate to the `Commands` page to tell the client what to do with those files. When clients download files using the convenience buttons on this page, they save them to `/app/downloads` for consistency. The convenience button is simply a way to issue a shell command instructing the bots to download the files from the server to a specific folder, so it will show up in the command history. It's worth noting that the files that are displayed are only files associated with the selected op, so be aware of this when you are working with multiple ops simulatenously.
 
-![File Interface Screenshot](files_screenshot.png "Interacting with Files")
+![File Interface Screenshot](images/files_screenshot.png "Interacting with Files")
 
 Finally, when an op is selected, there is a `Delete Op` button. This will delete the op from the database, as well as its command history. Files are not deleted using this button, so be sure to delete them in the `Files` interface beforehand if you need to. If files are not deleted beforehand, and you create a new op with the same name, the old files will show up for that new op.
 
