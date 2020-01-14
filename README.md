@@ -50,6 +50,8 @@ Upon selecting an op, you will be taken to the command screen. Here, you can sel
 
 `Shell` commands are run with Python's `os.system()` function, and behaves as though you were actually using a shell on the machine. These are run as the user running the python script, so keep this in mind if you are planning to run commands with sudo, or that otherwise might require elevated privileges. The docker containers are not run as root, and are alpine linux images, so be aware that their shell functionality may be quite limited. They were originally designed with the intent of running python scripts concurrently, so not much is installed on them.
 
+![Shell Screenshot](images/coordination_screenshot.png "Commands Running on the Bots")
+
 `Python` commands run raw python that is input into the text box. This feature is still in development, and currently only supports one-liners in the web UI. Behind the scenes, it uses python's `exec()` function to run the code. If you were to send custom requests to the API endpoint, you could increase your mileage with this. However, if you are using the web interface, I recommend sending files to the clients and using shell commands to execute those files instead.
 
 `Control` commands are miscellaneous functions for the bots that have specific useful behavior. Right now only two exist: `stop` and `logs`. The former halts the client, by telling the client script to call python's `exit()` function. The latter tells clients to upload their log files to the server for inspection.
