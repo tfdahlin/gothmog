@@ -1,4 +1,5 @@
 var current_op = null;
+var on_command_page = false;
 
 {{#api_url}}
 var api_url = `{{{api_url}}}`;
@@ -6,6 +7,8 @@ var api_url = `{{{api_url}}}`;
 {{^api_url}}
 var api_url = `${window.location.protocol}//${window.location.hostname}:8080`;
 {{/api_url}}
+
+
 function fetch_all_ops() {
     // Fetch all known ops and put them in the select option list.
     var select_tag = document.getElementById('ops-select');
@@ -69,32 +72,35 @@ function detect_new_op_click() {
     });
 }
 
-function detect_create_command_click() {
-    document.getElementById('command-create').addEventListener('click', function () {
-        var command = document.getElementById('command-input').value;
-        var confirmation = confirm(`Command to execute: ${command}`);
-        if (!confirmation) {
-            return;
-        }
-        console.log(command);
-        var command_type = document.getElementById('command-type-choice').value;
-        var req = new XMLHttpRequest();
-        req.responseType = 'json';
+function submit_current_command() {
+    var command = document.getElementById('command-input').value;
+    var confirmation = confirm(`Command to execute: ${command}`);
+    if (!confirmation) {
+        return;
+    }
+    console.log(command);
+    var command_type = document.getElementById('command-type-choice').value;
+    var req = new XMLHttpRequest();
+    req.responseType = 'json';
 
-        var json_data = JSON.stringify(
-        {
-            'cmd_type': command_type,
-            'cmd_data': command,
-            'op_name': current_op,
+    var json_data = JSON.stringify(
+    {
+        'cmd_type': command_type,
+        'cmd_data': command,
+        'op_name': current_op,
 
-        });
-
-        req.addEventListener('load', function () {
-            load_all_commands();
-        });
-        req.open('POST', `${api_url}/post`);
-        req.send(json_data);
     });
+
+    req.addEventListener('load', function () {
+        document.getElementById('command-input').value = '';
+        load_all_commands();
+    });
+    req.open('POST', `${api_url}/post`);
+    req.send(json_data);
+}
+
+function detect_create_command_click() {
+    document.getElementById('command-create').addEventListener('click', submit_current_command);
 }
 
 function get_row_class(row_pos, list_len) {
@@ -116,6 +122,7 @@ function get_row_class(row_pos, list_len) {
 }
 
 function load_all_commands() {
+    on_command_page = true;
     if (!current_op) {
         return;
     }
@@ -267,6 +274,7 @@ function hide_all_content() {
 }
 
 function display_specific_content(content) {
+    on_command_page = false;
     hide_all_content()
     .then(() => {
         document.getElementById(content).className = content;
@@ -354,6 +362,16 @@ function display_delete_op_button() {
     delete_op_button.style.display = 'initial';
 }
 
+function override_enter_key() {
+    var command_input_box = document.getElementById('command-input');
+    command_input_box.addEventListener('keypress', function (e) {
+        var enter_key_code = 13;
+        if (e.keyCode == enter_key_code) {
+            submit_current_command();
+        }
+    });
+}
+
 function init() {
     fetch_all_ops();
     detect_op_choice();
@@ -364,6 +382,7 @@ function init() {
     bind_files_nav();
     bind_upload_button();
     bind_delete_op_button();
+    override_enter_key();
 }
 
 window.onload = init;
