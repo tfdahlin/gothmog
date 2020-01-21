@@ -103,6 +103,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# Custom ignores
 web/package-lock.json
 web/node_modules/
 server/db.sqlite
