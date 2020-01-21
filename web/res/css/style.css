@@ -143,6 +143,48 @@ select.command-type-choice:hover {
     cursor: pointer;
 }
 
+div.convenience-button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1px;
+    margin: 2px;
+    background-color: #383838;
+    text-align: center;
+    border-radius: 4px;
+}
+
+div.convenience-button:hover {
+    background-color: #cd853f;
+    cursor: pointer;
+}
+
+div.convenience-button:active {
+    background-color: #ad651f;
+    cursor: pointer;
+}
+
+div.convenience-button-dangerous {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1px;
+    margin: 2px;
+    background-color: #cc3300;
+    text-align: center;
+    border-radius: 4px;
+}
+
+div.convenience-button-dangerous:hover {
+    background-color: #aa3300;
+    cursor: pointer;
+}
+
+div.convenience-button-dangerous:active {
+    background-color: #992200;
+    cursor: pointer;
+}
+
 input.command-input {
     border: 1px solid black;
     padding: 3px;

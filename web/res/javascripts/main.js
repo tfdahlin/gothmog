@@ -78,7 +78,6 @@ function submit_current_command() {
     if (!confirmation) {
         return;
     }
-    console.log(command);
     var command_type = document.getElementById('command-type-choice').value;
     var req = new XMLHttpRequest();
     req.responseType = 'json';
@@ -372,6 +371,46 @@ function override_enter_key() {
     });
 }
 
+function submit_control_command(command) {
+    var command_type = 'control';
+    var req = new XMLHttpRequest();
+    req.responseType = 'json';
+
+    var json_data = JSON.stringify(
+    {
+        'cmd_type': command_type,
+        'cmd_data': command,
+        'op_name': current_op,
+    });
+
+    req.addEventListener('load', function () {
+        document.getElementById('command-input').value = '';
+        load_all_commands();
+    });
+    req.open('POST', `${api_url}/post`);
+    req.send(json_data);
+}
+
+function submit_halt_command() {
+    var confirmation = confirm(`Are you sure you want to stop all connected clients?`);
+    if (!confirmation) {
+        return;
+    }
+    submit_control_command('stop');
+}
+
+function submit_log_request_command() {
+    submit_control_command('logs');
+}
+
+function bind_convenience_buttons() {
+    var halt_button = document.getElementById('halt-button');
+    halt_button.addEventListener('click', submit_halt_command);
+
+    var log_button = document.getElementById('log-button');
+    log_button.addEventListener('click', submit_log_request_command);
+}
+
 function init() {
     fetch_all_ops();
     detect_op_choice();
@@ -382,6 +421,7 @@ function init() {
     bind_files_nav();
     bind_upload_button();
     bind_delete_op_button();
+    bind_convenience_buttons();
     override_enter_key();
 }
 
