@@ -11,7 +11,7 @@ function usage() {
 }
 
 function run_waitress() {
-    . $DIR/env/bin/activate && waitress-serve --port=$1 main:app
+    . $DIR/env/bin/activate && cd server/ && waitress-serve --port=$1 main:app
 }
 
 ##### Main

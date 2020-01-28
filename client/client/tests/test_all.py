@@ -8,7 +8,7 @@ from unittest import TestCase
 # PIP library imports
 
 # Local file imports
-from client import Client
+from client.main import Client
 
 class TestClient(TestCase):
     def setUp(self):

@@ -108,9 +108,9 @@ venv.bak/
 
 client/client/prev_cmd.txt
 
-server/apps/files/uploaded_files/*
-server/crypto/*
-server/db.sqlite
+server/server/apps/files/uploaded_files/*
+server/server/crypto/*
+server/server/db.sqlite
 
 web/package-lock.json
 web/node_modules/

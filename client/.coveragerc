@@ -3,4 +3,3 @@
 [report]
 show_missing = True
 omit = env/*
-       client/tests/
