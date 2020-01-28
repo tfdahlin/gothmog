@@ -62,6 +62,13 @@ function start_server(app) {
             return console.log(`Error listening on port ${settings['webPort']}.`);
         }
         console.log(`${new Date()}: Web Server is listening on port ${settings['webPort']}.`);
+        var api_endpoint = null;
+        if (settings['api_url']) {
+            api_endpoint = `${settings['api_url']}`;
+        } else {
+            api_endpoint = `${settings['site_url']}:8080`;
+        }
+        console.log(`${new Date()}: Using API endpoint: ${api_endpoint}`);
     }).on('error', (err) => {
         if (err['code'] == 'EADDRINUSE') {
             console.log(`Port ${err['port']} is already in use on this machine, so the Gothmog web UI cannot launch.\n`);  
