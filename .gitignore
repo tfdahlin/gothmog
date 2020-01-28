@@ -104,12 +104,13 @@ venv.bak/
 .mypy_cache/
 
 # Custom ignores
-web/package-lock.json
-web/node_modules/
-server/db.sqlite
-
 *.swp
 
-server/crypto/*
-client/prev_cmd.txt
+client/client/prev_cmd.txt
+
 server/apps/files/uploaded_files/*
+server/crypto/*
+server/db.sqlite
+
+web/package-lock.json
+web/node_modules/

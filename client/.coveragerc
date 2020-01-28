@@ -1,0 +1,6 @@
+# -*- coding: utf-8 -*-
+# Filename: .coveragerc
+[report]
+show_missing = True
+omit = env/*
+       tests/
