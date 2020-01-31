@@ -1,5 +1,7 @@
 var current_op = null;
 var on_command_page = false;
+var prev_command_input = null;
+var prev_command_textarea = null;
 
 {{#api_url}}
 var api_url = `{{{api_url}}}`;
@@ -411,6 +413,36 @@ function bind_convenience_buttons() {
     log_button.addEventListener('click', submit_log_request_command);
 }
 
+function bind_command_type_dropdown() {
+    // Detect updates to the command type dropdown.
+    var dropdown = document.getElementById('command-type-choice');
+    dropdown.addEventListener('change', function () {
+        var input_field = document.getElementById('command-input');
+        if (this.value == 'shell' && input_field.nodeName == 'TEXTAREA') {
+            // Update from textarea to input for shell commands.
+            var updated_element = prev_command_input;
+            prev_command_textarea = input_field;
+
+            input_field.parentNode.replaceChild(updated_element, input_field);
+        } 
+        else if (this.value == 'python' && input_field.nodeName == 'INPUT') {
+            // Update from input to textarea for python code.
+            
+            // Create a new text area if necessary
+            var new_text_area = document.createElement('textarea');
+            new_text_area.id = 'command-input';
+            new_text_area.className = 'command-input';
+
+            var updated_element = prev_command_textarea || new_text_area;
+            // Cache the previous input element, so old commands are remembered
+            prev_command_input = input_field;
+
+            // Replace the command-input element.
+            input_field.parentNode.replaceChild(updated_element, input_field);
+        }
+    });
+}
+
 function init() {
     fetch_all_ops();
     detect_op_choice();
@@ -422,6 +454,7 @@ function init() {
     bind_upload_button();
     bind_delete_op_button();
     bind_convenience_buttons();
+    bind_command_type_dropdown();
     override_enter_key();
 }
 

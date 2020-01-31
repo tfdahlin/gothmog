@@ -192,6 +192,10 @@ input.command-input {
     font-size: 15px;
 }
 
+textarea.command-input {
+    width: 70%;
+}
+
 div.command-create {
     display: inline-block;
     border: 1px solid black;
@@ -222,7 +226,7 @@ div.command-list {
     left: 0px;
     bottom: 0px;
     right: 0px;
-    position: absolute;
+    /*position: absolute;*/
     overflow-y: auto;
 }
 
