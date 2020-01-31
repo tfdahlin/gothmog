@@ -5,14 +5,20 @@ function usage() {
 
 # Cheat to get this file's directory
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+SHOULD_EXIT=0
+
 
 if [ -z "$API_URL" ]; then
-    usage
-    exit 1
+    echo "API_URL environment variable not set."
+    SHOULD_EXIT=1
 fi
 
 if [ -z "$OP_NAME" ]; then
-    usage
+    echo "OP_NAME environment variable not set."
+    SHOULD_EXIT=1
+fi
+
+if [ $SHOULD_EXIT == 1 ]; then
     exit 1
 fi
 
