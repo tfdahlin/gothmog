@@ -9,7 +9,8 @@ import stat, sys, time, threading, os, uuid
 import requests
 
 # Local file imports
-import util, config
+import client.util as util
+import client.config as config
 
 secretsGenerator = secrets.SystemRandom()
 

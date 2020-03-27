@@ -23,4 +23,4 @@ if [ $SHOULD_EXIT == 1 ]; then
 fi
 
 # Run the op, and redirect output to an error file.
-. $DIR/env/bin/activate && python $DIR/client/main.py $API_URL $OP_NAME >> $DIR/error.log
+. $DIR/env/bin/activate && python $DIR/main.py $API_URL $OP_NAME >> $DIR/error.log

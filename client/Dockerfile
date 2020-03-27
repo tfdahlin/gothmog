@@ -26,7 +26,8 @@ RUN chown -R gothmog-client:gothmog-client /app
 USER gothmog-client
 
 # Copy necessary files.
-COPY ./client/main.py /app/client/client/main.py
+COPY ./main.py /app/client/main.py
+COPY ./client/client.py /app/client/client/client.py
 COPY ./client/util.py /app/client/client/util.py
 COPY ./client/config.py /app/client/client/config.py
 COPY ./client/tests /app/client/client/tests
